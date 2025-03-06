@@ -16,6 +16,7 @@ class _AllProductsState extends State<AllProducts> {
     TextEditingController productImgController = TextEditingController();
     TextEditingController productQuantityController = TextEditingController();
     TextEditingController productUnitPriceController = TextEditingController();
+    //TextEditingController productTotalPriceController = TextEditingController();
 
     showDialog(
       context: context,
@@ -52,7 +53,20 @@ class _AllProductsState extends State<AllProducts> {
                       //productDialog();
                     },
                     child: Text('Cancel')),
-                ElevatedButton(onPressed: () {}, child: Text('Add Product')),
+                ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        _productController.createProducts(
+                          productNameController.text,
+                          productImgController.text,
+                          int.parse(productQuantityController.text),
+                          int.parse(productUnitPriceController.text),
+                        );
+                        fetchData();
+                        Navigator.pop(context);
+                      });
+                    },
+                    child: Text('Add Product')),
               ],
             ),
           ],
@@ -82,6 +96,7 @@ class _AllProductsState extends State<AllProducts> {
       body: ListView.builder(
         itemCount: _productController.products.length,
         itemBuilder: (context, index) {
+          var products = _productController.products[index];
           return Card(
             elevation: 4,
             margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -89,14 +104,14 @@ class _AllProductsState extends State<AllProducts> {
               leading: SizedBox(
                 height: 70,
                 width: 50,
-                child: Image.network(
-                    'https://istorepreowned.co.za/cdn/shop/products/iPhone_13_Pro_Gold_d0f87a71-e692-4282-aa59-83608a1bd7ed.png?v=1710874226'),
+                child: Image.network(products['Img']),
               ),
               title: Text(
-                'iPhone 13 Pro',
+                products['ProductName'],
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              subtitle: Text('Price: \$1000 | Qty: 20'),
+              subtitle: Text(
+                  'Price: \ ${products['UnitPrice']} | Qty: ${products['Qty']}'),
               //////////////////////////////////////////////////////////////// Edit and Delete
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
