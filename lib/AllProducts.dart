@@ -11,17 +11,24 @@ class AllProducts extends StatefulWidget {
 
 class _AllProductsState extends State<AllProducts> {
   final ProductController _productController = ProductController();
-  void productDialog() {
+  void productDialog(
+      {String? id, String? name, String? img, int? qty, int? unitPrice}) {
     TextEditingController productNameController = TextEditingController();
     TextEditingController productImgController = TextEditingController();
     TextEditingController productQuantityController = TextEditingController();
     TextEditingController productUnitPriceController = TextEditingController();
     //TextEditingController productTotalPriceController = TextEditingController();
 
+    productNameController.text = name ?? "";
+    productImgController.text = img ?? "";
+    productQuantityController.text = qty.toString() ?? "";
+    productUnitPriceController.text = unitPrice.toString() ?? "";
+    //productTotalPriceController.text = totalPrice.toString() ?? "0";
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Add Product'),
+        title: Text(id == null ? 'Add Product' : 'Update Product'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -56,17 +63,29 @@ class _AllProductsState extends State<AllProducts> {
                 ElevatedButton(
                     onPressed: () {
                       setState(() {
-                        _productController.createProducts(
-                          productNameController.text,
-                          productImgController.text,
-                          int.parse(productQuantityController.text),
-                          int.parse(productUnitPriceController.text),
-                        );
-                        fetchData();
-                        Navigator.pop(context);
+                        if (id != null) {
+                          _productController.updateProducts(
+                            id,
+                            productNameController.text,
+                            productImgController.text,
+                            int.parse(productQuantityController.text),
+                            int.parse(productUnitPriceController.text),
+                          );
+                          fetchData();
+                          Navigator.pop(context);
+                        } else {
+                          _productController.createProducts(
+                            productNameController.text,
+                            productImgController.text,
+                            int.parse(productQuantityController.text),
+                            int.parse(productUnitPriceController.text),
+                          );
+                          fetchData();
+                          Navigator.pop(context);
+                        }
                       });
                     },
-                    child: Text('Add Product')),
+                    child: Text(id == null ? 'Add Product' : 'Update Product')),
               ],
             ),
           ],
@@ -104,20 +123,26 @@ class _AllProductsState extends State<AllProducts> {
               leading: SizedBox(
                 height: 70,
                 width: 50,
-                child: Image.network(products['Img']),
+                child: Image.network(products.img.toString()),
               ),
               title: Text(
-                products['ProductName'],
+                products.productName.toString(),
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               subtitle: Text(
-                  'Price: \ ${products['UnitPrice']} | Qty: ${products['Qty']}'),
+                  'Price: \$ ${products.unitPrice} | Qty: ${products.qty}'),
               //////////////////////////////////////////////////////////////// Edit and Delete
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   IconButton(
-                      onPressed: () => productDialog(), icon: Icon(Icons.edit)),
+                      onPressed: () => productDialog(
+                          id: products.sId,
+                          name: products.productName,
+                          img: products.img,
+                          qty: products.qty,
+                          unitPrice: products.unitPrice),
+                      icon: Icon(Icons.edit)),
                   IconButton(
                     onPressed: () {},
                     icon: Icon(Icons.delete),
