@@ -21,8 +21,9 @@ class _AllProductsState extends State<AllProducts> {
 
     productNameController.text = name ?? "";
     productImgController.text = img ?? "";
-    productQuantityController.text = qty.toString() ?? "0";
-    productUnitPriceController.text = unitPrice.toString() ?? "0";
+    productQuantityController.text = qty != null ? qty.toString() : "0";
+    productUnitPriceController.text =
+        unitPrice != null ? unitPrice.toString() : "0";
 
     showDialog(
       context: context,
@@ -56,7 +57,6 @@ class _AllProductsState extends State<AllProducts> {
                 TextButton(
                     onPressed: () {
                       Navigator.pop(context);
-                      //productDialog();
                     },
                     child: Text('Cancel')),
                 ElevatedButton(
@@ -77,10 +77,9 @@ class _AllProductsState extends State<AllProducts> {
                           int.parse(productUnitPriceController.text),
                         );
                       }
-                      setState(() {
-                        fetchData();
-                      });
+                      fetchData();
                       Navigator.pop(context);
+                      setState(() {});
                     },
                     child: Text(id == null ? 'Add Product' : 'Update Product')),
               ],
@@ -106,7 +105,7 @@ class _AllProductsState extends State<AllProducts> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.amberAccent,
+      backgroundColor: Colors.blue.shade50,
       appBar: AppBar(
         title: Text('All Products'),
       ),
