@@ -62,28 +62,25 @@ class _AllProductsState extends State<AllProducts> {
                     child: Text('Cancel')),
                 ElevatedButton(
                     onPressed: () {
-                      setState(() {
-                        if (id != null) {
-                          _productController.updateProducts(
-                            id,
-                            productNameController.text,
-                            productImgController.text,
-                            int.parse(productQuantityController.text),
-                            int.parse(productUnitPriceController.text),
-                          );
-                          fetchData();
-                          Navigator.pop(context);
-                        } else {
-                          _productController.createProducts(
-                            productNameController.text,
-                            productImgController.text,
-                            int.parse(productQuantityController.text),
-                            int.parse(productUnitPriceController.text),
-                          );
-                          fetchData();
-                          Navigator.pop(context);
-                        }
-                      });
+                      if (id != null) {
+                        _productController.updateProducts(
+                          id,
+                          productNameController.text,
+                          productImgController.text,
+                          int.parse(productQuantityController.text),
+                          int.parse(productUnitPriceController.text),
+                        );
+                      } else {
+                        _productController.createProducts(
+                          productNameController.text,
+                          productImgController.text,
+                          int.parse(productQuantityController.text),
+                          int.parse(productUnitPriceController.text),
+                        );
+                      }
+                      fetchData();
+                      Navigator.pop(context);
+                      setState(() {});
                     },
                     child: Text(id == null ? 'Add Product' : 'Update Product')),
               ],
@@ -144,7 +141,23 @@ class _AllProductsState extends State<AllProducts> {
                           unitPrice: products.unitPrice),
                       icon: Icon(Icons.edit)),
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      _productController
+                          .deleteProducts(products.sId.toString())
+                          .then((value) {
+                        if (value == true) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text('Product deleted successfully.'),
+                          ));
+                          fetchData();
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text('Failed to delete product.'),
+                          ));
+                          fetchData();
+                        }
+                      });
+                    },
                     icon: Icon(Icons.delete),
                     color: Colors.red,
                   ),

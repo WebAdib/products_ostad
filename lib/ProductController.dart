@@ -67,4 +67,15 @@ class ProductController {
       // Handle error
     }
   }
+
+  /////////////////////////////////////////////////////////// Delete the products
+  Future<bool> deleteProducts(String id) async {
+    final response = await http.get(Uri.parse(Urls.deleteProduct(id)));
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
