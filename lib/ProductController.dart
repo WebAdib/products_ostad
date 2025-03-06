@@ -61,7 +61,7 @@ class ProductController {
       }),
     );
 
-    if (response.statusCode == 201) {
+    if (response.statusCode == 201 || response.statusCode == 200) {
       fetchProducts();
     } else {
       // Handle error

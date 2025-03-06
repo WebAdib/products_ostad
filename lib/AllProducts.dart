@@ -78,9 +78,10 @@ class _AllProductsState extends State<AllProducts> {
                           int.parse(productUnitPriceController.text),
                         );
                       }
-                      fetchData();
+                      setState(() {
+                        fetchData();
+                      });
                       Navigator.pop(context);
-                      setState(() {});
                     },
                     child: Text(id == null ? 'Add Product' : 'Update Product')),
               ],
