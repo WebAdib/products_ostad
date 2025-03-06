@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'ProductController.dart';
+import 'widget/productCard.dart';
 
 class AllProducts extends StatefulWidget {
   const AllProducts({super.key});
@@ -17,13 +18,11 @@ class _AllProductsState extends State<AllProducts> {
     TextEditingController productImgController = TextEditingController();
     TextEditingController productQuantityController = TextEditingController();
     TextEditingController productUnitPriceController = TextEditingController();
-    //TextEditingController productTotalPriceController = TextEditingController();
 
     productNameController.text = name ?? "";
     productImgController.text = img ?? "";
-    productQuantityController.text = qty.toString() ?? "";
-    productUnitPriceController.text = unitPrice.toString() ?? "";
-    //productTotalPriceController.text = totalPrice.toString() ?? "0";
+    productQuantityController.text = qty.toString() ?? "0";
+    productUnitPriceController.text = unitPrice.toString() ?? "0";
 
     showDialog(
       context: context,
@@ -107,14 +106,57 @@ class _AllProductsState extends State<AllProducts> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.amberAccent,
       appBar: AppBar(
         title: Text('All Products'),
       ),
-      body: ListView.builder(
+      body: GridView.builder(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          mainAxisSpacing: 0,
+          crossAxisSpacing: 0,
+          childAspectRatio: 0.65,
+        ),
         itemCount: _productController.products.length,
         itemBuilder: (context, index) {
           var products = _productController.products[index];
-          return Card(
+          return ProductCard(
+            products: products,
+            onEdit: () => productDialog(
+                id: products.sId,
+                name: products.productName,
+                img: products.img,
+                qty: products.qty,
+                unitPrice: products.unitPrice),
+            onDelete: () {
+              _productController.deleteProducts(products.sId.toString()).then(
+                (value) {
+                  if (value == true) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text('Product deleted successfully.'),
+                    ));
+                    fetchData();
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text('Failed to delete product.'),
+                    ));
+                    fetchData();
+                  }
+                },
+              );
+            },
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => productDialog(),
+        child: Icon(Icons.add),
+      ),
+    );
+  }
+}
+/*
+Card(
             elevation: 4,
             margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             child: ListTile(
@@ -166,12 +208,4 @@ class _AllProductsState extends State<AllProducts> {
               ),
             ),
           );
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => productDialog(),
-        child: Icon(Icons.add),
-      ),
-    );
-  }
-}
+ */
